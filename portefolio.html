@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Immersif et Unique</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #111;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .main-wrapper {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            height: 100vh;
+        }
+
+        header {
+            background: radial-gradient(circle, #1e3c72, #000);
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            animation: textReveal 2s forwards;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            animation: fadeIn 3s forwards;
+        }
+
+        @keyframes textReveal {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        nav {
+            position: absolute;
+            bottom: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background: #fff;
+            color: #1e3c72;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transform: scale(1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.1);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1e90ff;
+        }
+
+        .card p {
+            font-size: 1rem;
+            color: #ccc;
+        }
+
+        footer {
+            background: #1e3c72;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <header>
+            <h1>Bienvenue dans mon univers</h1>
+            <p class="subtitle">Un portfolio qui reflète ma créativité et ma passion.</p>
+            <nav>
+                <a href="#about">À propos</a>
+                <a href="#skills">Compétences</a>
+                <a href="#projects">Projets</a>
+            </nav>
+        </header>
+
+        <main>
+            <section id="about" class="card">
+                <h3>À propos de moi</h3>
+                <p>Passionné par le développement web, je crée des expériences interactives et immersives, alliant design et technologie.</p>
+            </section>
+
+            <section id="skills" class="card">
+                <h3>Mes Compétences</h3>
+                <p>HTML, CSS, JavaScript, Conception UI/UX, et bien plus encore.</p>
+            </section>
+
+            <section id="projects" class="card">
+                <h3>Projets Réalisés</h3>
+                <p>Découvrez mes réalisations, du e-commerce aux applications web innovantes.</p>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 - Mon Portfolio | Créativité et Innovation</p>
+        </footer>
+    </div>
+</body>
+</html>
