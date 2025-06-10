@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mon CV</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <!-- Styles communs -->
+  <link rel="stylesheet" href="style_common.css" />
+
+  <!-- Styles spécifiques CV -->
+  <link rel="stylesheet" href="cv.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="navbar-left">
+        <img src="logo.png" class="logo" />
+    </div>
+
+    <div class="navbar-center">
+      <a href="https://www.linkedin.com/in/mohamed-benteboula-a83116297/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="https://github.com/MohanoSuke" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="acc.html">Accueil</a></li>
+        <li><a href="acc.html#projects">Projets</a></li>
+        <li><a href="parcours.html">Parcours</a></li>
+        <li><a href="cv.html">CV</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="profile-header">
+      <h1 class="cv-title">MOI</h1>
+    </section>
+
+    <section class="cv-section-modern">
+      <div class="left-info">
+    <h2>Informations personnelles</h2>
+
+    <div class="info-line">
+        <i class="fas fa-envelope"></i>
+        <span>mohamed.benteboula@hotmail.com</span>
+    </div>
+
+    <div class="info-line">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Lyon, Valence et alentours</span>
+    </div>
+
+    <a href="CV_Informatique_BENTEBOULA.pdf" class="cv-button" download>Télécharger mon CV</a>
+    </div>
+
+
+    <div class="right-info">
+    <h2>Profil</h2>
+    <p>
+        Étudiant en deuxième année de BUT Informatique, je me spécialise dans les domaines des réseaux et de la cybersécurité. 
+        Cette formation m’a permis d’acquérir une bonne compréhension des systèmes Linux, Windows, et des notions clés de l’administration réseau.
+    </p>
+    
+    <div id="more-profile-text" style="display: none;">
+        <p>
+        J’ai appris à mettre en place des solutions sécurisées, configurer des outils de surveillance, automatiser des tâches (Bash, PowerShell), et utiliser des environnements virtualisés comme VMware.
+        </p>
+        <p>
+        Curieux et rigoureux, je m’oriente vers une carrière en administration système, réseau ou cybersécurité.
+        </p>
+    </div>
+
+    <a id="toggle-more" class="show-more-btn" onclick="toggleMoreText()">+ En savoir plus</a>
+    </div>
+
+    </section>
+
+        <section class="technologies-section">
+    <h2>Technologies maîtrisées</h2>
+    <div class="tech-grid">
+        <div class="tech-item">
+        <img src="automate.png" alt="Power Automate">
+        <span>Power Automate</span>
+        </div>
+        <div class="tech-item">
+        <img src="docker.png" alt="Docker">
+        <span>Docker</span>
+        </div>
+        <div class="tech-item">
+        <img src="linux.png" alt="Ubuntu">
+        <span>Ubuntu</span>
+        </div>
+        <div class="tech-item">
+        <img src="wireshark.png" alt="Wireshark">
+        <span>Wireshark</span>
+        </div>
+        <div class="tech-item">
+        <img src="vmware.png" alt="VMware">
+        <span>VMware</span>
+        </div>
+        <div class="tech-item">
+        <img src="hping3.png" alt="hping3">
+        <span>hping3</span>
+        </div>
+        <div class="tech-item">
+        <img src="nmap.png" alt="nmap">
+        <span>nmap</span>
+        </div>
+        <div class="tech-item">
+        <img src="Whois.png" alt="whois">
+        <span>whois</span>
+        </div>
+        <div class="tech-item">
+        <img src="cisco.png" alt="whois">
+        <span>Cisco Tracer</span>
+        </div>
+    </div>
+    </section>
+
+<section class="contact-form-section" id="contact">
+  <h2>Me Contacter</h2>
+  <form action="contact.php" method="POST" class="contact-form">
+    <div class="form-group">
+      <input type="text" name="name" placeholder="Votre nom" required>
+    </div>
+
+    <div class="form-group">
+      <input type="email" name="email" placeholder="Votre email" required>
+    </div>
+
+    <div class="form-group">
+      <select name="subject" required>
+        <option value="" disabled selected>Objet de la demande</option>
+        <option value="question">Question</option>
+        <option value="stage">Demande</option>
+        <option value="collaboration">Collaboration</option>
+        <option value="autre">Autre</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <textarea name="message" placeholder="Votre message" rows="6" required></textarea>
+    </div>
+
+    <button type="submit" class="btn-contact">Envoyer</button>
+  </form>
+</section>
+
+
+
+
+
+
+  </main>
+
+  <footer class="global-footer">
+    <p>&copy; 2025 Mohamed. Tous droits réservés.</p>
+  </footer>
+</body>
+</html>
+
+<script>
+  let lastScrollTop = 0;
+  const header = document.querySelector("header");
+
+  window.addEventListener("scroll", () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (scrollTop > lastScrollTop && scrollTop > 100) {
+      header.classList.add("hide");
+    } else {
+      header.classList.remove("hide");
+    }
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  });
+
+  // Code pour le bouton "En savoir plus"
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("toggle-more");
+    const moreText = document.getElementById("more-profile-text");
+
+    toggleBtn.addEventListener("click", function () {
+      const isVisible = moreText.style.display === "block";
+      moreText.style.display = isVisible ? "none" : "block";
+      toggleBtn.textContent = isVisible ? "+ En savoir plus" : "− Réduire";
+    });
+  });
+
+    window.onbeforeunload = function () {
+    window.scrollTo(0, 0);
+  };
+</script>
+

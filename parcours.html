@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcours - Mohamed</title>
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+        <link rel="stylesheet" href="style_common.css">
+        <link rel="stylesheet" href="style-parcours.css">
+
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="navbar-left">
+            <img src="logo.png" class="logo" />
+        </div>
+        <div class="navbar-center">
+            <a href="https://www.linkedin.com/in/mohamed-benteboula-a83116297/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/MohanoSuke" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="acc.html">Accueil</a></li>
+                <li><a href="acc.html#projects">Projets</a></li>
+                <li><a href="parcours.html">Parcours</a></li>
+                <li><a href="cv.html">CV</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <h1>Mon Parcours</h1>
+
+    <div class="timeline"> 
+            <div class="timeline-item">
+                 <div class="timeline-dot"></div>
+                 <div class="timeline-content">
+                    <h2>Administrateur Logiciel et réseau - Slycma Stage</h2>
+                    <p>Avril à Juin 2025</p>
+                    <p>Stage de 2ᵉ année du BUT Informatique au sein du service informatique d'une entreprise industrielle spécialisée dans les portes d’ascenseur. 
+                    Mise en place d’un système de ticketing, centralisation documentaire avec SharePoint, automatisation avec Power Automate, 
+                    et gestion du parc informatique.</p>
+                </div>
+            </div>
+
+             <div class="timeline-item">
+                 <div class="timeline-dot"></div>
+                 <div class="timeline-content">
+                      <h2>IUT Lyon 1 - Réseaux & Cybersécurité</h2>
+                        <p>Formation BUT informatique 2023-2026</p>
+                        <p>Parcours administration réseaux et cybersécurité. Apprentissage des systèmes, réseaux, sécurité, et projets concrets.</p>
+                </div>
+            </div>
+
+    
+             <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h2>Lycée Algoud Laffemas Valence</h2>
+                    <p>Baccalauréat Général, Mention Bien 2022-2023</p>
+                    <p>Spécialités  Mathématiques, Physiques Chimie</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="certifications-section">
+    <h2>Mes Certifications</h2>
+    <div class="certifications-grid">
+        <div class="certification-card">
+            <h3>À VENIR</h3>
+            <h3>Certification Cisco - CCNA</h3>
+            <p>Introduction aux réseaux, routage et commutation, sécurité de base.</p>
+        </div>
+        <div class="certification-card">
+            <h3>À VENIR</h3>
+            <h3>Certification HackTheBox</h3>
+            <p>Formation en cybersécurité : pentest, réseau, CTF, analyse des vulnérabilités.</p>
+        </div>
+    </div>
+</div>
+
+    </main>
+        <!-- Inclure le fichier JavaScript -->
+
+    <footer class="global-footer">
+        <p>&copy; 2025 Mohamed. Tous droits réservés.</p>
+    </footer>
+    <!-- Script à la fin -->
+    <script>
+    let lastScrollTop = 0;
+    const header = document.querySelector('header');
+
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTop > lastScrollTop && scrollTop > 100) {
+            // On scroll vers le bas → cacher la navbar
+            header.classList.add('hide');
+        } else {
+            // On scroll vers le haut → afficher la navbar
+            header.classList.remove('hide');
+        }
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
+
+      window.onbeforeunload = function () {
+    window.scrollTo(0, 0);
+  };
+</script>
+
+</body>
+</html>

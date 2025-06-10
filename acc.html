@@ -3,983 +3,1022 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cube Interactif avec Joystick Amélioré</title>
-    
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            color: #fff;
-            background: radial-gradient(circle, rgba(10, 28, 88, 1) 0%, rgba(30, 90, 200, 1) 50%, rgba(0, 0, 0, 1) 100%);
-            background-attachment: fixed;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            
-        }
-        header {
-            width: 100%;
-            padding: 20px 0;
-            text-align: center;
-            background: #121e36;
-            position: fixed;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ombre légère pour ajouter du contraste */
-            transition: background-color 0.3s ease; /* Transition pour le changement de couleur */
-            z-index: 1000; /* La valeur élevée assure qu'elle est au-dessus de tous les autres éléments */
-        }
-
-        header .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        header .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            /* La position du logo ne change pas */
-        }
-
-        header .nav-links {
-            position: absolute; /* Positionnement absolu pour les mettre tout à droite */
-            right: 45px; /* On les colle à droite avec une marge de 20px */
-            display: flex;
-            gap: 20px; /* Espacement entre les liens */
-        }
-
-        header .nav-links a {
-            margin: 0;
-            text-decoration: none;
-            color: #7a869c;
-            transition: color 0.3s ease;
-        }
-
-        header .nav-links a:hover {
-            color: #00aaff;
-        }
-        
-        /* Effet de particules animées */
-        .background-effects {
-            position: fixed; /* Reste en place même en scrollant */
-
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/asfalt-light.png');
-            pointer-events: none;
-            animation: particles 5s infinite linear;
-        }
-
-        @keyframes particles {
-            0% { opacity: 0.9; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.1); }
-            100% { opacity: 0.9; transform: scale(1); }
-        }
-
-
-        .section {
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 20px ;
-        }
-        .section1 {
-            /*position: relative; /* Permet de positionner des éléments à l'intérieur comme le footer */
-            width: 100%;
-            max-width: 800px;
-            overflow: hidden; /* Empêche tout dépassement */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: auto;
-            margin: 150px 0;
-            padding: 2rem;
-            background: linear-gradient(145deg, #2f2f2f, #4b4b4b);
-            border-radius: 15px;
-            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.4), -4px -4px 15px rgba(255, 255, 255, 0.1);
-        }
-        .section1 h2 {
-            margin: 0;
-            padding: 0.5rem 1rem;
-            font-size: 2.5rem;
-            color: #00aaff;
-            text-shadow: 0 2px 5px rgba(0, 0, 255, 0.5);
-            text-align: center;
-        }
-
-        .section1 p {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            color: #cfcfcf;
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        .cube-container {
-            perspective: 1000px;
-            width: 300px;
-            height: 300px;
-            cursor: grab;
-        }
-
-        .cube-container:active {
-            cursor: grabbing;
-        }
-
-        .cube {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transform: rotateX(-30deg) rotateY(30deg);
-            transition: transform 0.1s linear;
-        }
-
-        a { 
-            color: #ffffff;
-            text-decoration: none; 
-        }
-
-        
-        .cube-face {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(30, 90, 200, 0.9);
-            border: 2px solid #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-
-        .cube-face:hover {
-            background: rgba(255, 255, 255, 0.8);
-            color: #1e3c72;
-        }
-
-        /* Faces du cube */
-        .front { transform: rotateY(0deg) translateZ(150px); }
-        .back { transform: rotateY(180deg) translateZ(150px); }
-        .left { transform: rotateY(-90deg) translateZ(150px); }
-        .right { transform: rotateY(90deg) translateZ(150px); }
-        .top { transform: rotateX(90deg) translateZ(150px); }
-        .bottom { transform: rotateX(-90deg) translateZ(150px); }
-
-        /* Joystick */
-        .joystick-container {
-            position: absolute;
-            right: 20px;
-            bottom: 20px;
-            width: 120px;
-            height: 120px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-        }
-
-        .joystick {
-            width: 90px;
-            height: 90px;
-            background-color: #333;
-            border-radius: 50%;
-            position: relative;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 0, 255, 0.5);
-        }
-
-        .joystick-knob {
-            width: 35px;
-            height: 35px;
-            background-color: #00f;
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 4px 8px rgba(0, 0, 255, 0.7);
-            transition: transform 0.1s ease-out;
-        }
-
-        .search-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            width: 60%;
-            border: 2px solid #1e5aa8; /* Contour bleu */
-            border-radius: 5px;
-            padding: 5px;
-        }
-
-        .search-bar input {
-            width: 90%;
-            padding: 10px;
-            font-size: 1rem;
-            border: none;
-            background-color: transparent;
-            color :rgb(163, 185, 230)                
-        }
-
-        .search-bar button {
-            background-color: transparent;
-            border: none;
-            font-size: 1.5rem;
-            color: #1e5aa8 50%;
-            cursor: pointer;
-        }
-
-        .search-bar button:hover {
-            color: #2f7ad9;
-        }
-
-        /* Conteneur des tags (mots-clés) */
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap; /* Permet de passer à la ligne si nécessaire */
-            gap: 10px; /* Espacement entre les tags */
-            margin-top: 25px;
-        }
-
-        /* Style des tags individuels */
-        .tag {
-            display: flex;
-            align-items: center;
-            padding: 5px 10px;
-            margin-top: -10px;
-            margin-bottom: 30px;
-            border: 2px solid #00aaff; /* Bordure bleue */
-            border-radius: 5px;
-            background-color: transparent; /* Fond transparent */
-            color: #00aaff; /* Texte bleu */
-            font-size: 1rem;
-            cursor: default;
-            
-        }
-
-        /* Crois pour supprimer un tag */
-        .tag .remove-tag {
-            margin-left: 10px;
-            color: red;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .tag .remove-tag:hover {
-            color: darkred; /* Couleur plus foncée au survol */
-        }
-
-       /* Conteneur des tags et du bouton */
-        .tags-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px; /* Espacement entre les tags et le bouton */
-            margin-top: 20px;
-        }
-
-        /* Conteneur des tags */
-        #tags-container {
-            display: flex;
-            flex-wrap: wrap; /* Permet le retour à la ligne si les tags dépassent */
-            gap: 10px; /* Espacement entre les tags */
-        }
-
-        /* Bouton "Supprimer" */
-        #clear-filters {
-            margin-left: auto; /* Place le bouton tout à droite */
-            padding: 10px 20px;
-            font-size: 1rem;
-            color: #fff;
-            background-color: transparent;
-            border: 2px solid #00aaff;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-bottom: 20px;
-
-        }
-
-        /* Effet au survol */
-        #clear-filters:hover {
-            background-color: #2bd7dd;
-        }
-
-        /* Grille des projets */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            justify-content: center;
-            align-items: center;
-            max-width: 100%; /* Limite la largeur à celle de la section parent */
-            margin: 0 auto; /* Centre la grille horizontalement */
-        }
-
-        /* Carte projet */
-        .project-card {
-            position: relative;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 20%, #413c3c 70%); /* Eclairage central avec dégradé */
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.4), -4px -4px 15px rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            height: 200px;
-            width: 20vh;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid #00aaff; /* Ajout du contour de couleur bleue */
-        }
-
-        .project-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Pop-up qui s'affiche au survol */
-        .project-card .popup {
-            position: absolute;
-            width: auto;
-            height: auto;
-            background-color: rgba(173, 216, 230, 0.9); /* Bleu clair */
-            display: none;
-            justify-content: center;
-            align-items: center;
-            color: #003366;
-            font-size: 1.2rem;
-            text-align: center;
-            border: 2px solid #003366; /* Contour plus foncé */
-            
-        }
-
-        .project-card:hover .popup {
-            display: flex;
-        }
-
-        .project-content {
-            flex-grow: 1;
-            width: 100%;
-            height: 70%;
-            background-color: #000;
-        }
-
-        .project-title {
-            width: 100%; /* S'étend sur toute la largeur */
-            text-align: center; /* Texte centré */
-            font-size: 1.2em; /* Taille de la police */
-            margin: 10px 0px 10px; /* Retire les marges par défaut */
-            font-family: 'Arial', sans-serif; /* Choisissez une police simple */
-            font-weight: bold; /* Texte en gras */
-            text-shadow: 
-                 0 0 5px #00adad, /* Lueur principale */
-                0 0 10px #00b7ff, 
-                0 0 40px #00aaff, /* Lueur plus intense */
-                0 0 80px #0156b8; /* Lueur externe supplémentaire */
-            transform: translateY(-3px); /* Soulever le texte */
-        }
-
-        /* Ciblage de l'image dans la div */
-        .project-content img {
-            width: 100%;  /* Définir la largeur de l'image à 100% de son conteneur */
-            height: 100%; /* Laisser la hauteur s'adapter à la largeur */
-            object-fit: cover; /* L'option cover permet de garder l'image centrée tout en la recadrant si nécessaire */
-            object-position: center; /* Centrer l'image dans son conteneur */
-        }
-
-        /* Style des éléments de chaque hobby */
-        .hobby-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        /* Conteneur d'image */
-        .image-container {
-            flex-shrink: 0;
-        }
-
-        /* Image */
-        .image-container img {
-            width: auto;
-            max-width: 450px;
-            border-radius: 10px;
-        }
-
-        /* Texte */
-        .text-container {
-            width: auto; 
-            padding-left: 5%;
-            border-radius: 10px; 
-            box-shadow: 0px 4px 20px rgba(4, 133, 255, 0.5);        
-        }
-
-        .text-container ul {
-            list-style-type: none;
-            padding: 0;
-            color: #cfcfcf;
-            font-size: 1.2rem;
-            line-height: 1.6;
-        }
-
-        /* Disposition des éléments pour chaque hobby */
-        .hobby-item.sport {
-            justify-content: flex-start;
-        }
-
-        .hobby-item.sport .image-container img {
-            margin-left: -130px;
-        }
-
-        .hobby-item.lecture {
-            justify-content: flex-start;
-            flex-direction: row-reverse;
-        }
-
-        .hobby-item.lecture .image-container img {
-            margin-right: -34px;
-        }
-
-        .hobby-item.voyage {
-            justify-content: flex-start;
-        }
-
-        .hobby-item.voyage .image-container img {
-            margin-left: -180px;
-        }
-
-        .text-container strong {
-            color: #00aaff; /* Couleur de accentuation du titre */
-        }
-
-        #s6 {
-            width: 100%; /* Prend toute la largeur de son conteneur */
-        }
-
-        .sous-section {
-            display: flex; /* Utilise Flexbox pour diviser la section en 2 colonnes */
-            justify-content: space-between; /* Met de l'espace entre les colonnes */
-            align-items: center; /* Aligne verticalement les éléments au centre */
-            width: 100%; /* Remplir toute la largeur du conteneur */
-        }
-
-        #left {
-            width: 45%; /* Définit la largeur du premier paragraphe (photo) */
-            text-align: center; /* Centre le texte à l'intérieur */
-        }
-
-        #right {
-            width: 45%; /* Définit la largeur du deuxième paragraphe (phrase) */
-            text-align: right; /* Aligne le texte à droite */
-        }
-        /* Alignement horizontal des icônes */
-        .social-icons {
-            display: flex;
-            justify-content: center;  /* Centre les icônes */
-            gap: 20px;                /* Espace entre les icônes */
-            margin: 20px;
-        }
-
-        .social-icons a {
-            font-size: 2rem;         /* Taille des icônes */
-            color: #fff;             /* Couleur des icônes */
-            text-decoration: none;   /* Enlève le soulignement */
-        }
-
-        .social-icons a:hover i {
-            color: #00aaff;          /* Couleur des icônes lors du survol */
-        }
-
-        /* Améliorer l'apparence de la disponibilité */
-        .disponibility {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #cfcfcf;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
-        /* Conteneur principal */
-        .sous-section {
-            display: flex; /* Disposition en ligne */
-            align-items: center; /* Alignement vertical */
-            gap: 60px; /* Espacement entre l'image et le texte */
-        }
-
-        /* Style pour l'image */
-        .photo-container img {
-            width: 150px; /* Largeur de l'image */
-            height: auto; /* Maintenir les proportions */
-            border-radius: 10px; /* Coins arrondis */
-        }
-
-        /* Conteneur texte */
-        .texte-container1 {
-            display: flex;
-            flex-direction: column; /* Empile le texte et le bouton */
-            gap: 20px; /* Espacement entre le texte et le bouton */
-            text-align: center;
-        }
-
-        /* Bouton stylisé */
-        .cv-button {
-            font-size: 1.5rem; /* Taille du texte agrandie */
-            color: #00aaff; /* Texte en bleu */
-            background: transparent; /* Fond transparent */
-            border: 2px solid #00aaff;            
-            border-radius: 5px; /* Coins arrondis */
-            padding: 40px ; /* Espacement interne du bouton */
-            cursor:grab; /* Curseur interactif */
-            transition: all 0.3s ease; /* Animation fluide */
-        }
-
-        /* Effet au survol du bouton */
-        .cv-button:hover {
-            background: #007BFF; /* Fond bleu au survol */
-            color: white; /* Texte blanc */
-        }
-
-        footer {
-            width: 100%;
-            padding: 20px 0;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #7a869c;
-            background: #121e36;
-            bottom: 0;
-            left: 0;
-            z-index: 1000; /* La valeur élevée assure qu'elle est au-dessus de tous les autres éléments */
-        }
-            
-    </style>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-</head>    
-<div class="background-effects"></div> <!-- Effets de particules en arrière-plan -->
-
+    <!-- Ajoutez dans le <head> -->
+<meta name="description" content="Portfolio de Mohamed, étudiant en cybersécurité spécialisé en réseaux">
+<meta name="keywords" content="cybersécurité, développement web, réseaux, portfolio">
+<meta property="og:title" content="Mohamed - Portfolio Cybersécurité">
+<meta property="og:description" content="Découvrez mes projets en cybersécurité et développement">
+<link rel="canonical" href="votre-url.com">
+    <title>Mohamed - Étudiant en Cybersécurité</title>
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="acc.css">
+    <link rel="stylesheet" href="style_common.css">
+</head>
 <body>
+    <!-- Étoiles -->
+    <div class="stars star1"></div>
+    <div class="stars star2"></div>
+    <div class="stars star3"></div>
+    <div class="stars star4"></div>
+    <div class="stars star5"></div>
+    <div class="stars star6"></div>
+    <div class="stars star7"></div>
+    <div class="stars star8"></div>
+    <div class="stars star9"></div>
+    <div class="stars star10"></div>
+    <div class="stars star11"></div>
+    <div class="stars star12"></div>
+
+    <!-- Header -->
     <header>
-        <div class="nav">
-            <div class="logo">Portfolio</div>
-            <div class="nav-links">
-                <a href="#s1">À propos</a>
-                <a href="#s2">Professionnel</a>
-                <a href="#s3">Projets</a>
-                <a href="#s4">Hobbies</a>
-                <a href="#s5">Contact</a>
-                <a href="#s6">CV</a>
-            </div>
+        <div class="navbar-left">
+            <img src="logo.png" class="logo" />
         </div>
+
+        <div class="navbar-center">
+            <a href="https://www.linkedin.com/in/mohamed-benteboula-a83116297/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/MohanoSuke" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+
+        <nav>
+            <ul>
+            <li><a href="acc.html">Accueil</a></li>
+            <li><a href="#projects">Projets</a></li>
+            <li><a href="parcours.html">Parcours</a></li>
+            <li><a href="cv.html">CV</a></li>
+            </ul>
+        </nav>
     </header>
-    <div class="section">
-        <div class="cube-container" id="cube-container">
-            <div class="cube" id="cube">
-                <a href="#s6" class="cube-face front">CV</a>
-                <a href="#s3" class="cube-face back">Projets</a>
-                <a href="#s4" class="cube-face left">Hobbies</a>
-                <a href="#s2" class="cube-face right">Professionnel</a>
-                <a href="#s1" class="cube-face top">À propos</a>
-                <a href="#s5" class="cube-face bottom">Contact</a>
-            </div>
-        </div>
-    </div>
-    <main>
-    <div class="section1" id="s1">
-        <h2>À propos</h2>
-        <p>Ayant décroché un <STRONG>baccalauréat général scientifique</STRONG>, <strong>MOHAMED BENTEBOULA</strong> se tient à un carrefour décisif de sa vie. Refusant de suivre un chemin tout tracé, il décide de plonger dans l’univers fascinant de <strong>l’informatique</strong>. Sa quête le mène à l’Université <strong>Claude Bernard Lyon 1</strong>, un lieu où il espère non seulement apprendre, mais aussi repousser les limites de ce qu’il croit possible.
-            Fasciné par les mystères des algorithmes et le potentiel infini du code, il entame une nouvelle aventure, prêt à faire face aux défis qui l'attendent. Avec son esprit affûté et sa détermination à toute épreuve, Mohamed s'apprête à écrire le premier chapitre d'une histoire dont il sera le héros.          
-            <br>Et ce n’est que le début de <strong>son</strong> aventure.</p>
-    </div>
-    <div class="section1" id="s2">
-        <h2>Professionnel</h2>
-           <p> Actuellement étudiant à l'IUT Lyon 1, où je me spécialise dans l'administration des systèmes et des réseaux & Cybersécurité. Passionné par les infrastructures informatiques, j'ai développé au cours de mes études une solide expertise dans la gestion des systèmes d'exploitation, la configuration des réseaux et la sécurité informatique.
-            Actuellement en recherche active d'une alternance en tant qu'administrateur système et réseaux, je souhaite mettre en pratique mes compétences techniques et acquérir de l'expérience professionnelle dans un environnement dynamique et stimulant. Mon programme s'étend sur deux ans, avec un rythme d’une semaine en entreprise et une semaine à l’université, à compter de cette année 2024-2026. Mon objectif est d'intégrer une entreprise afin de débuter dans la vie active, tout en poursuivant mon apprentissage scolaire et apporter ma joie de travailler, ma motivation et mon enthousiasme au sein de votre équipe.</p>
-    </div>
-    <div class="section1" id="s3">
-        <h2>Projets</h2>
-        <div class="search-bar">
-            <input type="text" id="search-input" placeholder="Rechercher un langage ...">
-            <button type="button" id="clear-search">X</button>
-        </div>
-        <div class="tags-wrapper">
-            <div id="tags-container" class="tags-container"></div>
-            <button id="clear-filters" style="display: none;">X</button>
-        </div>
-        <div class="projects-grid">
-            <div class="project-card" data-keywords="css html">
-                <div class="project-content">
-                    <img src="bus.png" alt="">
-                </div>
-                <div class="popup">
-                    Compétences : Développement Web, Réseaux
-                </div>
-                <a href="http://nathan.liegeon.pages.univ-lyon1.fr/sae_web/" class="project-link" target="_blank">
-                <p class="project-title">DouaMou'V</p>
-                </a>
-            </div>
-            <div class="project-card" data-keywords="c python">
-                <div class="project-content">
-                    <img src="avion_pop.png" alt="">
-                </div>
-                <div class="popup">
-                    Compétences : Développement Web, Réseaux
-                </div>
-                <a href="https://github.com/MohanoSuke/Flight-Manager-Application" class="project-link" target="_blank">
-                <p class="project-title">Gestion'Air</p>
-                </a>
-            </div>
-            <div class="project-card" data-keywords="html css php ">
-                <div class="project-content">
-                    <img src="bl.png" alt="">
-                </div>
-                <div class="popup">
-                    Compétences : Développement Web, Réseaux
-                </div>
-                <a href="" class="project-link" target="_blank">
-                <p class="project-title">BLUELOCK (en travaux)</p>
-                </a>
-            </div>
-            
-        </div>
-    </div>
-    <div class="section1" id="s4">
-        <h2>Hobbies</h2>
-        <!-- Étape 1 : Sport -->
-        <div class="hobby-item sport">
-            <div class="image-container">
-                <img src="bachira.png" alt="Sport">
-            </div>
-            <div class="text-container">
-                <ul>
-                    <li><strong>Sport :</strong> Amateur de sport et particulièrement par le football, ce que j'aime le plus c'est la compétition, l'effort physique, la motivation, et la discipline que m'apporte les sports au quotidien.</li>
-                </ul>
-            </div>
-        </div>
-    
-        <!-- Étape 2 : Lecture -->
-        <div class="hobby-item lecture">
-            <div class="image-container">
-                <img src="book-removebg-preview.png" alt="Lecture">
-            </div>
-            <div class="text-container">
-                <ul>
-                    <li><strong>Lecture :</strong> Amateur de romans et livres en tout genre, ma préférence va particulièrement aux anime de sport, d'aventure et de motivation. J'aime m'attacher aux personnages, suivre leur évolution et découvrir leurs histoires intrigantes. Ces récits me permettent de vivre des émotions fortes à travers leurs défis, leurs victoires et leurs échecs.</li>
-                </ul>
-            </div>
-        </div>
-    
-        <!-- Étape 3 : Astrophotographie -->
-        <div class="hobby-item voyage">
-            <div class="image-container">
-                <img src="avion-removebg-preview.png" alt="Astrophotographie">
-            </div>
-            <div class="text-container">
-                <ul>
-                    <li><strong>Voyage :</strong> Amateur de beaux paysages, j’aime partir à la découverte de terres diverses, explorer des lieux riches en histoire et en culture, et rencontrer des personnes aux horizons variés. Voyager me permet non seulement de m’émerveiller devant la splendeur de la nature, mais aussi de contempler la richesse de la création.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    
-    
-    <div class="section1" id="s5">
-        <h2>Contact</h2>
-        
-        <div class="social-icons">
-            <a href="#" id="email" onclick="copyToClipboard('mohamed.benteboula@hotmail.com')">
-                <i class="fas fa-envelope"></i> 
-            </a>
-            <a href="#" id="phone" onclick="copyToClipboard('+33 6 46 80 85 39')">
-                <i class="fas fa-phone"></i> 
-            </a>
-            <a href="https://www.linkedin.com/in/mohamed-benteboula-a83116297/" target="_blank">
-                <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="https://github.com/MohanoSuke" target="_blank">
-                <i class="fab fa-github"></i>
-            </a>
-        </div>
-    
-        <p class="disponibility">Disponible sur : <strong>Lyon, Valence et Alentours</strong></p>
-    </div>
-    
-    <div class="section1" id="s6">
-        <h2>CV</h2>
-        <div class="sous-section">
-            <div style="display: flex; align-items: center; gap: 60px; margin-bottom: 40px;">
-                <!-- Image à gauche, collée -->
-                <div style="flex-shrink: 0;">
-                    <p id="left"><img src="bach.png" alt="Photo" class="photo" style="display: flex; align-items: center; gap: 20px;"></p>
-                </div>
-                <!-- Texte à droite -->
-                <div class="texte-container1">
-                    <p style="color: #cfcfcf; font-size: 1.2rem; line-height: 1.6;">
-                        Consultez mon CV pour en savoir plus sur moi
-                    </p>
-                    <!-- Bouton en tant que lien pour télécharger le CV -->
-                    <a href="CV_administrateur_réseau.pdf" download="Mon CV" class="cv-button">CV</a>
-                </div>
-                
-        </div>
-    </div>  
-    <div class="joystick-container" id="joystick-container">
-        <div class="joystick">
-            <div class="joystick-knob" id="joystick-knob"></div>
-        </div>
-    </div>
-    </main>
 
-    <footer>
-        &copy; 2025 - Mon Portfolio | Mohamed
+    <!-- Présentation -->
+    <div class="container">
+        <div class="profile-info">
+            <h1>MOHAMED</h1>
+            <h2>Étudiant en réseau et cybersécurité</h2>
+            <a href="#projects" class="btn" id="scrollButton">Voir mes projets</a>
+        </div>
+
+        <div class="skills-area">
+            <div class="skills-card">
+                <img src="photopp.png" alt="Mohamed" class="profile-image">
+                <div class="skills">
+                    
+                    <div class="skill">
+                        <div class="skill-name">
+                            <div>
+                                <div class="skill-category">Sécurité RÉSEAUX</div>
+                            </div>
+                            <div class="skill-percentage">75%</div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-name">
+                            <div>
+                                <div class="skill-category">Virtualisation</div>
+                            </div>
+                            <div class="skill-percentage">70%</div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 70%;"></div>
+                        </div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-name">
+                            <div>
+                                <div class="skill-category">Gestion Projet</div>
+                            </div>
+                            <div class="skill-percentage">60%</div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-name">
+                            <div>
+                                <div class="skill-category">Cybersécurité</div>
+                            </div>
+                            <div class="skill-percentage">30%</div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 30%;"></div>
+                        </div>
+                    </div>
+                    <!-- Ajoute d'autres compétences ici -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+ <!-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+
+
+ <!-- Projets -->
+<section class="projects-section" id="projects">
+    <div class="section-title">
+        <div class="title-line-1"></div>
+        <h2>PROJETS</h2>
+        <div class="title-line"></div>
+    </div>
+
+    <!-- Boutons pour filtrer -->
+    <div class="project-buttons">
+      <button class="project-filter-btn" id="btn-university">Projets universitaires</button>
+      <button class="project-filter-btn" id="btn-professional">Projets professionnels</button>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Rechercher par langage...">
+    </div>
+
+
+
+
+
+    <!-- Projets universitaires -->
+    <div class="projects-wrapper" id="projects-university">
+        <!-- DouaMou'V -->
+        <div class="project-row left">
+          <div class="project-card">
+            <img src="douamouv.png" alt="DouaMou'V">
+            <div class="project-content">
+              <h3>DouaMou'V</h3>
+              <p>Développement Web, Réseaux</p>
+              <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span></div>
+              <button onclick="openPopup('douamouv')">VOIR PLUS</button>
+            </div>
+            <div class="image-slider">
+                <button class="prev" onclick="changeImage(this, -1)">&#10094;</button>
+                <!-- Les images ont la classe clickable-image pour agrandissement -->
+                <img class="slider-image clickable-image" src="doualogo.png" alt="logo doua" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="page1.png" alt="page 1" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="page2.png" alt="page 2" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="page3.png" alt="page 3" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="page4.png" alt="page 4" onclick="openLightbox(this)">
+                <button class="next" onclick="changeImage(this, 1)">&#10095;</button>
+            </div>
+          </div>            
+        </div>
+
+        <!-- Gestion'Air -->
+        <div class="project-row right">
+          <div class="project-card">
+            <img src="avion_pop.png" alt="Gestion'Air">
+            <div class="project-content">
+              <h3>Gestion'Air</h3>
+              <p>Développement Web, Réseaux</p>
+              <div class="tags"><span class="tag">C</span><span class="tag">Python</span></div>
+              <button onclick="openPopup('gestionair')">VOIR PLUS</button>
+            </div>
+          </div>
+        </div>
+        <!-- BLUELOCK -->
+        <div class="project-row left">
+          <div class="project-card">
+            <img src="bl.png" alt="BLUELOCK">
+            <div class="project-content">
+                <h3>BlueLock</h3>
+                <p>Développement Web, Réseaux</p>
+                <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">PHP</span></div>
+                <button onclick="openPopup('bluelock')">VOIR PLUS</button>
+            </div>
+            <div class="image-slider">
+                <button class="prev" onclick="changeImage(this, -1)">&#10094;</button>
+                <!-- Les images ont la classe clickable-image pour agrandissement -->
+                    <img class="slider-image clickable-image" src="blueLo.png" alt="BlueLock logo" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="bl1.png" alt="Bluelock 1" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="bl2.png" alt="Bluelock 2" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="bl3.png" alt="Bluelock 3" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="bl4.png" alt="Bluelock 4" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="bl5.png" alt="Bluelock 5" onclick="openLightbox(this)">
+                <button class="next" onclick="changeImage(this, 1)">&#10095;</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="projects-wrapper hidden" id="projects-professional">
+        <!-- Carte projet Cartographie du parc informatique -->
+        <div class="project-row right">
+        <div class="project-card">
+            <img src="cartographie.png" alt="Cartographie du parc informatique">
+            <div class="project-content">
+            <h3>Cartographie du parc informatique</h3>
+            <p>Inventaire automatisé et gestion du parc matériel</p>
+            <div class="tags"><span class="tag">Power Automate</span><span class="tag">SharePoint</span><span class="tag">Excel</span></div>
+            <button onclick="openPopup('cartographie')">VOIR PLUS</button>
+            </div>
+            <div class="image-slider">
+                <button class="prev" onclick="changeImage(this, -1)">&#10094;</button>
+                <!-- Les images ont la classe clickable-image pour agrandissement -->
+                <img class="slider-image clickable-image" src="SharePoint.png" alt="SharePoint" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="carto1.png" alt="carto 1" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="carto2.png" alt="carto 2" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="carto3.png" alt="carto 3" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="carto4.png" alt="carto 4" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="carto5.png" alt="carto 5" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="carto6.png" alt="carto 6" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="carto7.png" alt="carto 7" onclick="openLightbox(this)">
+                <img class="slider-image hidden clickable-image" src="carto8.png" alt="carto 8" onclick="openLightbox(this)">
+                <button class="next" onclick="changeImage(this, 1)">&#10095;</button>
+            </div>
+        </div>
+        </div>
+
+        <!-- ticketing -->
+        <div class="project-row left">
+            <div class="project-card">
+              <img src="ticketing.png" alt="Système de ticketing" />
+              <div class="project-content">
+                  <h3>Système de ticketing pour gestion des commandes</h3>
+                  <p>Gestion d'outil de ticketing</p>
+                    <div class="tags">
+                     <span class="tag">Power Automate</span>
+                     <span class="tag">SharePoint</span>
+                  <span class="tag">Automatisation</span>
+                </div>
+                     <button onclick="openPopup('ticketing')">VOIR PLUS</button>
+                 </div>
+                <div class="image-slider">
+                    <button class="prev" onclick="changeImage(this, -1)">&#10094;</button>
+                    <!-- Les images ont la classe clickable-image pour agrandissement -->
+                    <img class="slider-image clickable-image" src="tick.png" alt="Bus 1" onclick="openLightbox(this)">
+                    <img class="slider-image hidden clickable-image" src="tick1.png" alt="Bus 3" onclick="openLightbox(this)">
+                    <img class="slider-image hidden clickable-image" src="tick5.png" alt="Bus 3" onclick="openLightbox(this)">
+                    <img class="slider-image hidden clickable-image" src="tick3.png" alt="Bus 3" onclick="openLightbox(this)">
+                    <img class="slider-image hidden clickable-image" src="tick4.png" alt="Bus 3" onclick="openLightbox(this)">
+                    <button class="next" onclick="changeImage(this, 1)">&#10095;</button>
+                </div>
+            </div>
+        </div>
+        <!-- Notice Explicative -->
+        <div class="project-row right">
+            <div class="project-card">
+                <img src="emploie.png" alt="Notice Explicative">
+                <div class="project-content">
+                    <h3>Notice Explicative</h3>
+                    <p>Création d'une notice explicative des missions</p>
+                    <div class="tags"><span class="tag">Documentation</span><span class="tag">Design</span></div>
+                    <button onclick="openPopup('notice')">VOIR PLUS</button>
+                </div>
+                <div class="image-slider">
+                    <button class="prev" onclick="changeImage(this, -1)">&#10094;</button>
+                    <!-- Les images ont la classe clickable-image pour agrandissement -->
+                    <img class="slider-image clickable-image" src="not.png" alt="Notice 1" onclick="openLightbox(this)">
+                    <button class="next" onclick="changeImage(this, 1)">&#10095;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <!-- Popups Projet -->
+
+        <!-- Popup DouaMou'V -->
+        <div id="popup-douamouv" class="popup hidden">
+            <div class="popup-content">
+                <h2>DouaMou'V</h2>
+                <p class="popup-description">
+                Site web de mobilité urbaine dédié au campus Lyon 1, pour promouvoir les transports doux. Ce projet a était mon premier à l'Université.
+                </p>
+
+                <div class="popup-section">
+                    <h3>Fonctionnalités</h3>
+                    <ul>
+                        <li>Présentation du site de la Doua</li>
+                        <li>Proposition d'abonnements de transport</li>
+                        <li>Design responsive adapté</li>
+                        <li>Mise en place d'un formulaire interactif</li>
+                    </ul>
+
+                    <div class="skills-section">
+                    <h3>Compétences du Projet</h3>
+                    <div class="skills-container">
+                        <div class="skill">
+                            <div class="skill-name">
+                                <span class="skill-title">HTML</span>
+                                <span class="skill-percentage">60%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 60%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skills-container">
+                        <div class="skill">
+                            <div class="skill-name">
+                                <span class="skill-title">CSS</span>
+                                <span class="skill-percentage">40%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 40%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <h3>Compétences complémentaires</h3>
+                    <ul>
+                        <li>Respect des bonnes pratiques web</li>
+                        <li>Accessibilité et SEO de base</li>
+                        <li>Gestion de projet avec Git</li>
+                        <li>Travail collaboratif</li>
+                    </ul>
+                </div>
+
+                <h3>Compétences du BUT Informatique mobilisées</h3>
+                <p>Ce projet m’a permis de mobiliser plusieurs compétences du BUT Informatique (référentiel national), notamment :</p>
+
+                <div class="but-competences-grid">
+                <div class="competence-card c1">
+                    <span class="code">C1</span>
+                    <div class="competence-details">
+                    <h4>Réaliser un développement d’application</h4>
+                    <ul>
+                        <li><strong>A1.1.3</strong> – Réaliser les interfaces utilisateurs d'une application</li>
+                        <li><strong>A1.2.1</strong> – Analyser un problème avec méthode</li>
+                    </ul>
+                    </div>
+                </div>
+
+                <div class="competence-card c2">
+                    <span class="code">C2</span>
+                    <div class="competence-details">
+                    <h4>Optimiser des applications informatiques</h4>
+                    <ul>
+                        <li><strong>A2.3.2</strong> – Appliquer les bonnes pratiques de développement</li>
+                        <li><strong>A2.3.3</strong> – Prendre en compte les exigences de qualité</li>
+                    </ul>
+                    </div>
+                </div>
+
+                <div class="competence-card c5">
+                    <span class="code">C5</span>
+                    <div class="competence-details">
+                    <h4>Conduire un projet</h4>
+                    <ul>
+                        <li><strong>A5.3.1</strong> – Identifier les besoins et les contraintes</li>
+                        <li><strong>A5.3.2</strong> – Planifier les activités</li>
+                        <li><strong>A5.3.4</strong> – Suivre l’avancement d’un projet</li>
+                    </ul>
+                    </div>
+                </div>
+
+                <div class="competence-card c6">
+                    <span class="code">C6</span>
+                    <div class="competence-details">
+                    <h4>Travailler dans une équipe informatique</h4>
+                    <ul>
+                        <li><strong>A6.1.1</strong> – Identifier ses rôles et missions dans une équipe</li>
+                        <li><strong>A6.1.2</strong> – Adopter une attitude professionnelle</li>
+                    </ul>
+                    </div>
+                </div>
+                </div>
+                <div class="popup-section demo-link">
+                    <a href="http://nathan.liegeon.pages.univ-lyon1.fr/sae_web/" target="_blank" rel="noopener noreferrer">Voir la démo</a>
+                </div>
+
+                <button class="closePopup">Fermer</button>
+            </div>
+        </div>
+
+        <!-- Popup Gestion'Air -->
+        <div id="popup-gestionair" class="popup hidden">
+        <div class="popup-content">
+            <h2>Gestion'Air</h2>
+            <p class="popup-description">
+            Application de gestion du trafic aérien développée dans le cadre universitaire, destinée à optimiser les départs de vols à l'aéroport Grenoble Alpes Isère.
+            </p>
+
+            <div class="popup-section">
+            <h3>Fonctionnalités</h3>
+            <ul>
+                <li>Affichage des informations de vol</li>
+                <li>Recherche de vols</li>
+                <li>Affichage de la liste des passagers</li>
+                <li>Gestion des retards et annulations</li>
+                <li>Optimisation de l'utilisation des pistes</li>
+            </ul>
+
+            <div class="skills-section">
+                <h3>Compétences du Projet</h3>
+                <div class="skills-container">
+                <div class="skill">
+                    <div class="skill-name">
+                    <span class="skill-title">C</span>
+                    <span class="skill-percentage">70%</span>
+                    </div>
+                    <div class="skill-bar">
+                    <div class="skill-progress" style="width: 70%;"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                    <span class="skill-title">Python</span>
+                    <span class="skill-percentage">30%</span>
+                    </div>
+                    <div class="skill-bar">
+                    <div class="skill-progress" style="width: 30%;"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <h3>Compétences complémentaires</h3>
+            <ul>
+                <li>Analyse des données de trafic</li>
+                <li>Optimisation algorithmique</li>
+                <li>Gestion de projet avec Git</li>
+                <li>Travail en équipe</li>
+            </ul>
+            </div>
+
+            <h3>Compétences du BUT Informatique mobilisées</h3>
+            <p>Ce projet m’a permis de mobiliser plusieurs compétences du BUT Informatique (référentiel national), notamment :</p>
+
+            <div class="but-competences-grid">
+            <div class="competence-card c1">
+                <span class="code">C1</span>
+                <div class="competence-details">
+                <h4>Réaliser un développement d’application</h4>
+                <ul>
+                    <li><strong>A1.1.2</strong> – Implémenter des fonctionnalités simples dans un langage impératif (C, Python)</li>
+                    <li><strong>A1.1.4</strong> – Développer une application avec des structures de données (listes, tableaux...)</li>
+                    <li><strong>A1.2.1</strong> – Analyser un problème (vols, retards, affectation des pistes) avec méthode</li>
+                </ul>
+                </div>
+            </div>
+
+            <div class="competence-card c2">
+                <span class="code">C2</span>
+                <div class="competence-details">
+                <h4>Optimiser des applications informatiques</h4>
+                <ul>
+                    <li><strong>A2.2.1</strong> – Évaluer l’impact des choix algorithmiques sur les performances (recherche de vols, affectation des pistes...)</li>
+                    <li><strong>A2.3.2</strong> – Appliquer les bonnes pratiques de développement (organisation du code, modularité, lisibilité)</li>
+                </ul>
+                </div>
+            </div>
+
+            <div class="competence-card c5">
+                <span class="code">C5</span>
+                <div class="competence-details">
+                <h4>Conduire un projet</h4>
+                <ul>
+                    <li><strong>A5.3.1</strong> – Identifier les besoins de gestion aéroportuaire (retards, passagers...)</li>
+                    <li><strong>A5.3.2</strong> – Planifier les activités de développement (modules C et Python)</li>
+                    <li><strong>A5.3.4</strong> – Suivre l’avancement du projet avec Git (versionning, jalons)</li>
+                </ul>
+                </div>
+            </div>
+
+            <div class="competence-card c6">
+                <span class="code">C6</span>
+                <div class="competence-details">
+                <h4>Travailler dans une équipe informatique</h4>
+                <ul>
+                    <li><strong>A6.1.1</strong> – Identifier ses rôles et missions dans une équipe projet (ex : responsable affichage, logique...)</li>
+                    <li><strong>A6.1.2</strong> – Adopter une attitude professionnelle : communication, entraide, respect des délais</li>
+                </ul>
+                </div>
+            </div>
+            </div>
+            <div class="popup-section demo-link">
+            <a href="https://github.com/MohanoSuke/Flight-Manager-Application" target="_blank" rel="noopener noreferrer">Voir la démo</a>
+            </div>
+
+            <button class="closePopup">Fermer</button>
+        </div>
+        </div>
+
+        <!-- Popup BlueLock -->
+        <div id="popup-bluelock" class="popup hidden">
+        <div class="popup-content">
+            <h2>BlueLock</h2>
+            <p class="popup-description">
+            Réseau social sportif développé en Laravel, permettant aux passionnés de sport de suivre les scores en direct, de rejoindre des clubs, de créer des événements et de personnaliser leur profil.
+            </p>
+
+            <div class="popup-section">
+            <h3>Fonctionnalités</h3>
+            <ul>
+                <li>Affichage des scores en direct (football)</li>
+                <li>Fil d’actualité communautaire (posts, commentaires)</li>
+                <li>Création d’événements et inscription en temps réel</li>
+                <li>Rejoindre et représenter un club</li>
+                <li>Profil personnalisable (nom, bio, photo)</li>
+                <li>Recherche instantanée (full-text)</li>
+                <li>Outils de modération pour les admins</li>
+                <li>Connexion avec Google (OAuth)</li>
+            </ul>
+
+            <div class="skills-section">
+                <h3>Compétences du Projet</h3>
+                <div class="skills-container">
+                <div class="skill">
+                    <div class="skill-name">
+                    <span class="skill-title">PHP</span>
+                    <span class="skill-percentage">50%</span>
+                    </div>
+                    <div class="skill-bar">
+                    <div class="skill-progress" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                    <span class="skill-title">Blade</span>
+                    <span class="skill-percentage">36%</span>
+                    </div>
+                    <div class="skill-bar">
+                    <div class="skill-progress" style="width: 36%; background-color: #ff4f4f;"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                    <span class="skill-title">CSS</span>
+                    <span class="skill-percentage">10%</span>
+                    </div>
+                    <div class="skill-bar">
+                    <div class="skill-progress" style="width: 10%; background-color: #a764d6;"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                    <span class="skill-title">JavaScript</span>
+                    <span class="skill-percentage">4%</span>
+                    </div>
+                    <div class="skill-bar">
+                    <div class="skill-progress" style="width: 4%; background-color: #ffe84b;"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <h3>Compétences complémentaires</h3>
+            <ul>
+                <li>Intégration API football en temps réel</li>
+                <li>Connexion OAuth Google</li>
+                <li>Architecture MVC Laravel</li>
+                <li>Gestion de version Git</li>
+                <li>Travail collaboratif avec GitHub</li>
+                <li>Utilisation de composants Blade</li>
+            </ul>
+            </div>
+
+            <h3>Compétences du BUT Informatique mobilisées</h3>
+            <p>Ce projet m’a permis de mobiliser plusieurs compétences du BUT Informatique, notamment :</p>
+
+            <div class="but-competences-grid">
+            <div class="competence-card c1">
+                <span class="code">C1</span>
+                <div class="competence-details">
+                <h4>Réaliser un développement d’application</h4>
+                <ul>
+                    <li><strong>A1.1.3</strong> – Réaliser les interfaces utilisateurs avec Blade et CSS</li>
+                    <li><strong>A1.2.1</strong> – Analyser un problème métier (réseau social sportif)</li>
+                    <li><strong>A1.3.3</strong> – Utiliser un framework (Laravel) pour accélérer le développement</li>
+                </ul>
+                </div>
+            </div>
+
+            <div class="competence-card c2">
+                <span class="code">C2</span>
+                <div class="competence-details">
+                <h4>Optimiser des applications informatiques</h4>
+                <ul>
+                    <li><strong>A2.3.2</strong> – Bonnes pratiques Laravel (MVC, sécurité)</li>
+                    <li><strong>A2.3.3</strong> – Accessibilité, performances, ergonomie (recherche instantanée)</li>
+                </ul>
+                </div>
+            </div>
+
+            <div class="competence-card c5">
+                <span class="code">C5</span>
+                <div class="competence-details">
+                <h4>Conduire un projet</h4>
+                <ul>
+                    <li><strong>A5.3.1</strong> – Identifier les besoins utilisateurs (fans, clubs)</li>
+                    <li><strong>A5.3.2</strong> – Planifier les tâches (features, backend/frontend)</li>
+                    <li><strong>A5.3.4</strong> – Suivi avec GitHub</li>
+                </ul>
+                </div>
+            </div>
+
+            <div class="competence-card c6">
+                <span class="code">C6</span>
+                <div class="competence-details">
+                <h4>Travailler dans une équipe informatique</h4>
+                <ul>
+                    <li><strong>A6.1.1</strong> – Collaboration sur GitHub</li>
+                    <li><strong>A6.1.2</strong> – Répartition des rôles, communication efficace</li>
+                </ul>
+                </div>
+            </div>
+            </div>
+            <div class="popup-section demo-link">
+            <a href="#" target="_blank" rel="noopener noreferrer">Voir la démo</a>
+            </div>
+
+            <button class="closePopup">Fermer</button>
+        </div>
+        </div>
+
+ <!-- Pop up projet professionnel-->
+
+
+  <!-- Popup Cartographie Parc Informatique -->
+<div id="popup-cartographie" class="popup hidden">
+  <div class="popup-content">
+    <h2 style="margin-bottom: 25px;">Cartographie du parc informatique - Slycma</h2>
+
+    <p class="popup-description" style="margin-bottom: 20px;">
+      Slycma souhaitait disposer d'une vue à jour de son parc informatique pour améliorer sa gestion, 
+      anticiper les achats et identifier précisément les matériels actifs.
+      Avant mon intervention, l’inventaire était partiel et peu structuré, rendant le suivi peu fiable.
+    </p>
+    <p style="margin-bottom: 20px;">
+      J’ai conçu et déployé un outil d'inventaire automatisé basé sur SharePoint et Excel, 
+      couplé à des flux Power Automate pour synchroniser les données et faciliter les mises à jour.
+    </p>
+    <p style="margin-bottom: 30px;">
+      La mission a été divisée en plusieurs phases : apprentissage des outils, collecte exhaustive du matériel, 
+      développement des automatisations et tests approfondis pour assurer la fiabilité du système.
+    </p>
+    
+    <p class="popup-description" style="margin-bottom: 20px; font-weight: bold;">Phase 2 :</p>
+    <p style="margin-bottom: 25px;">
+      Après centralisation initiale, j’ai organisé les données en regroupant équipements par type, suivi de leur disponibilité, 
+      et gestion simplifiée des périphériques. J’ai créé des feuilles Excel automatisées avec formules et listes déroulantes, 
+      pour un suivi dynamique et fiable.
+    </p>
+
+    <h3 style="margin-bottom: 20px;">Fonctionnalités</h3>
+    <ul style="margin-bottom: 40px;">
+      <li>Collecte automatisée et centralisée des informations matérielles</li>
+      <li>Synchronisation des données entre SharePoint et Excel via Power Automate</li>
+      <li>Feuilles Excel pour gestion des quantités, disponibilité, et périphériques</li>
+      <li>Visualisation claire et dynamique du parc informatique</li>
+      <li>Automatisation des mises à jour et réduction des erreurs manuelles</li>
+      <li>Tests et ajustements pour garantir l'intégrité des données</li>
+    </ul>
+
+    <h3 style="margin-bottom: 20px;">Compétences du Projet</h3>
+    <div class="skills-container" style="margin-bottom: 40px;">
+      <div class="skill" style="margin-bottom: 15px;">
+        <div class="skill-name">
+          <span class="skill-title">Power Automate</span>
+          <span class="skill-percentage">70%</span>
+        </div>
+        <div class="skill-bar">
+          <div class="skill-progress" style="width: 70%;"></div>
+        </div>
+      </div>
+      <div class="skill" style="margin-bottom: 15px;">
+        <div class="skill-name">
+          <span class="skill-title">SharePoint</span>
+          <span class="skill-percentage">75%</span>
+        </div>
+        <div class="skill-bar">
+          <div class="skill-progress" style="width: 75%; background-color: #ff6b9d;"></div>
+        </div>
+      </div>
+      <div class="skill" style="margin-bottom: 15px;">
+        <div class="skill-name">
+          <span class="skill-title">Excel</span>
+          <span class="skill-percentage">80%</span>
+        </div>
+        <div class="skill-bar">
+          <div class="skill-progress" style="width: 80%; background-color: #a764d6;"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom: 20px;">Compétences complémentaires</h3>
+    <ul style="margin-bottom: 40px;">
+      <li>Analyse et structuration de données complexes</li>
+      <li>Automatisation et synchronisation inter-plateformes</li>
+      <li>Gestion collaborative via SharePoint</li>
+      <li>Tests, validation et maintenance du système</li>
+      <li>Formation et communication avec l’équipe IT</li>
+    </ul>
+
+    <h3 style="margin-bottom: 20px;">Compétences du BUT Informatique mobilisées</h3>
+    <p style="margin-bottom: 30px;">
+      Ce projet m’a permis de mobiliser plusieurs compétences du BUT Informatique, notamment :
+    </p>
+
+    <div class="but-competences-grid" style="margin-bottom: 40px;">
+      <div class="competence-card c2" style="margin-bottom: 25px;">
+        <span class="code">C2</span>
+        <div class="competence-details">
+          <h4 style="margin-bottom: 10px;">Optimiser des applications informatiques</h4>
+          <ul>
+            <li><strong>AC2.3</strong> – Automatiser un processus métier</li>
+            <li>Mise en place de flux automatisés entre SharePoint et Excel</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="competence-card c3" style="margin-bottom: 25px;">
+        <span class="code">C3</span>
+        <div class="competence-details">
+          <h4 style="margin-bottom: 10px;">Développer une application dans un environnement collaboratif</h4>
+          <ul>
+            <li><strong>AC3.3</strong> – Partager et gérer les données dans un environnement collaboratif</li>
+            <li>Centralisation et gestion collaborative des données sur SharePoint</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="competence-card c5" style="margin-bottom: 25px;">
+        <span class="code">C5</span>
+        <div class="competence-details">
+          <h4 style="margin-bottom: 10px;">Gérer des données de l'information</h4>
+          <ul>
+            <li><strong>AC5.2</strong> – Organiser, structurer et exploiter des données à des fins d’analyse</li>
+            <li>Structuration des données dans Excel (filtres, colonnes dynamiques)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="competence-card c5" style="margin-bottom: 25px;">
+        <span class="code">Transversal</span>
+        <div class="competence-details">
+          <h4 style="margin-bottom: 10px;">Conduire un projet</h4>
+          <ul>
+            <li>Planifier, structurer, tester et maintenir la solution de manière autonome</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <button class="closePopup">Fermer</button>
+  </div>
+</div>
+
+    <!-- Popup Ticketing Slycma -->
+    <div id="popup-ticketing" class="popup hidden">
+      <div class="popup-content">
+        <h2 style="margin-bottom: 25px;">Système de ticketing pour gestion des commandes - Slycma</h2>
+        <p class="popup-description" style="margin-bottom: 20px;">
+          Slycma souhaitait centraliser la gestion des demandes informatiques via un système formalisé.
+          Avant, ces demandes se faisaient de façon informelle par mail ou oralement, compliquant leur suivi.
+          J’ai conçu et déployé un système interne de ticketing connecté à une liste SharePoint pour centraliser et organiser les demandes.
+        </p>
+        <p style="margin-bottom: 35px;">
+          La mission comprenait la définition des besoins, la création du formulaire avec les champs essentiels, 
+          la mise en place d’un workflow d’alertes automatiques à l’équipe IT, ainsi que des tests et ajustements avec les utilisateurs.
+        </p>
+
+        <h3 style="margin-bottom: 20px;">Compétences du Projet</h3>
+        <div class="skills-container" style="margin-bottom: 40px;">
+          <div class="skill" style="margin-bottom: 15px;">
+            <div class="skill-name">
+              <span class="skill-title">Power Automate</span>
+              <span class="skill-percentage">60%</span>
+            </div>
+            <div class="skill-bar">
+              <div class="skill-progress" style="width: 60%;"></div>
+            </div>
+          </div>
+          <div class="skill" style="margin-bottom: 15px;">
+            <div class="skill-name">
+              <span class="skill-title">SharePoint</span>
+              <span class="skill-percentage">70%</span>
+            </div>
+            <div class="skill-bar">
+              <div class="skill-progress" style="width: 70%; background-color: #ff6b9d;"></div>
+            </div>
+          </div>
+          <div class="skill" style="margin-bottom: 15px;">
+            <div class="skill-name">
+              <span class="skill-title">Formulaire Web</span>
+              <span class="skill-percentage">50%</span>
+            </div>
+            <div class="skill-bar">
+              <div class="skill-progress" style="width: 50%; background-color: #a764d6;"></div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 20px;">Compétences complémentaires</h3>
+        <ul style="margin-bottom: 40px;">
+          <li>Gestion des besoins utilisateurs et définition de workflow</li>
+          <li>Automatisation des processus métiers</li>
+          <li>Test et ajustements en conditions réelles</li>
+          <li>Communication et formation des utilisateurs</li>
+        </ul>
+
+        <h3 style="margin-bottom: 20px;">Compétences du BUT Informatique mobilisées</h3>
+        <p style="margin-bottom: 30px;">
+          Ce projet m’a permis de mobiliser plusieurs compétences du BUT Informatique (référentiel national), notamment :
+        </p>
+
+        <div class="but-competences-grid" style="margin-bottom: 40px;">
+          <div class="competence-card c1" style="margin-bottom: 25px;">
+            <span class="code">C1</span>
+            <div class="competence-details">
+              <h4 style="margin-bottom: 10px;">Réaliser un développement d’application</h4>
+              <ul>
+                <li><strong>AC1.2</strong> – Mettre en place une solution technique répondant à un besoin métier</li>
+                <li>Conception et déploiement du formulaire de ticketing connecté à SharePoint</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="competence-card c2" style="margin-bottom: 25px;">
+            <span class="code">C2</span>
+            <div class="competence-details">
+              <h4 style="margin-bottom: 10px;">Optimiser des applications informatiques</h4>
+              <ul>
+                <li><strong>AC2.3</strong> – Automatiser un processus métier</li>
+                <li>Mise en place d’alertes email automatiques via Power Automate</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="competence-card c3" style="margin-bottom: 25px;">
+            <span class="code">C3</span>
+            <div class="competence-details">
+              <h4 style="margin-bottom: 10px;">Développer une application dans un environnement collaboratif</h4>
+              <ul>
+                <li><strong>AC3.2</strong> – Interagir avec les parties prenantes d’un projet</li>
+                <li>Définition des besoins, workflow et accès utilisateurs avec l’équipe IT</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="competence-card c6" style="margin-bottom: 25px;">
+            <span class="code">C6</span>
+            <div class="competence-details">
+              <h4 style="margin-bottom: 10px;">Communiquer efficacement avec les différents acteurs</h4>
+              <ul>
+                <li><strong>AC6.2</strong> – Expliquer une solution technique à un public non spécialiste</li>
+                <li>Présentation, formation et réponses aux retours utilisateurs</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="competence-card c5" style="margin-bottom: 25px;">
+            <span class="code">Transversal</span>
+            <div class="competence-details">
+              <h4 style="margin-bottom: 10px;">Conduire un projet</h4>
+              <ul>
+                <li>Planifier, concevoir et déployer la solution en autonomie</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="popup-section demo-link">
+          <!-- Optionnel : lien vers démo ou rapport -->
+        </div>
+
+        <button class="closePopup">Fermer</button>
+      </div>
+    </div>
+<!-- Popup Notice Explicative -->
+<div id="popup-notice" class="popup hidden">
+  <div class="popup-content">
+    <h2 style="margin-bottom: 25px;">Création d'une notice explicative des missions - Slycma</h2>
+    <p class="popup-description" style="margin-bottom: 20px;">
+      Suite à l'implémentation d'outils comme le formulaire de ticketing et la centralisation des matériels, 
+      il est rapidement apparu nécessaire de documenter les procédures afin d'aider les utilisateurs à se familiariser 
+      avec les nouvelles solutions. J'ai créé des guides utilisateurs pour accompagner les employés dans l'utilisation 
+      des outils tout en favorisant leur autonomie.
+    </p>
+    <p style="margin-bottom: 35px;">
+      La mission comprenait la rédaction de notices pédagogiques structurées en étapes numérotées, 
+      l'intégration de captures d'écran illustratives, la simplification du jargon technique pour un public non spécialiste, 
+      ainsi que la validation par les utilisateurs et l'hébergement sur SharePoint.
+    </p>
+
+    <h3 style="margin-bottom: 20px;">Compétences du Projet</h3>
+    <div class="skills-container" style="margin-bottom: 40px;">
+      <div class="skill" style="margin-bottom: 15px;">
+        <div class="skill-name">
+          <span class="skill-title">Rédaction Technique</span>
+          <span class="skill-percentage">85%</span>
+        </div>
+        <div class="skill-bar">
+          <div class="skill-progress" style="width: 85%;"></div>
+        </div>
+      </div>
+      <div class="skill" style="margin-bottom: 15px;">
+        <div class="skill-name">
+          <span class="skill-title">Communication Adaptée</span>
+          <span class="skill-percentage">80%</span>
+        </div>
+        <div class="skill-bar">
+          <div class="skill-progress" style="width: 80%; background-color: #ff6b9d;"></div>
+        </div>
+      </div>
+      <div class="skill" style="margin-bottom: 15px;">
+        <div class="skill-name">
+          <span class="skill-title">Documentation SharePoint</span>
+          <span class="skill-percentage">75%</span>
+        </div>
+        <div class="skill-bar">
+          <div class="skill-progress" style="width: 75%; background-color: #a764d6;"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom: 20px;">Compétences complémentaires</h3>
+    <ul style="margin-bottom: 40px;">
+      <li>Vulgarisation technique et pédagogie</li>
+      <li>Structuration de contenu et design graphique</li>
+      <li>Tests en conditions réelles et itérations d'amélioration</li>
+      <li>Gestion de projet et validation collaborative</li>
+    </ul>
+
+    <h3 style="margin-bottom: 20px;">Compétences du BUT Informatique mobilisées</h3>
+    <p style="margin-bottom: 30px;">
+      Ce projet m'a permis de mobiliser plusieurs compétences du BUT Informatique (référentiel national), notamment :
+    </p>
+
+    <div class="but-competences-grid" style="margin-bottom: 40px;">
+      <div class="competence-card c1" style="margin-bottom: 25px;">
+        <span class="code">C1</span>
+        <div class="competence-details">
+          <h4 style="margin-bottom: 10px;">Réaliser un développement d'application</h4>
+          <ul>
+            <li><strong>AC1.3</strong> – Mettre en place une solution de gestion de données</li>
+            <li>Organisation et structuration de la documentation sur SharePoint</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="competence-card c3" style="margin-bottom: 25px;">
+        <span class="code">C3</span>
+        <div class="competence-details">
+          <h4 style="margin-bottom: 10px;">Développer une application dans un environnement collaboratif</h4>
+          <ul>
+            <li><strong>AC3.4</strong> – Participer à la rédaction de documents associés à un développement</li>
+            <li>Production de guides d'utilisation accompagnant les outils déployés, intégrés à SharePoint</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="competence-card c6" style="margin-bottom: 25px;">
+        <span class="code">C6</span>
+        <div class="competence-details">
+          <h4 style="margin-bottom: 10px;">Communiquer efficacement avec les différents acteurs</h4>
+          <ul>
+            <li><strong>AC6.1</strong> – Rédiger un document technique</li>
+            <li>Rédaction de notices explicatives structurées, illustrées et adaptées aux utilisateurs</li>
+            <li><strong>AC6.2</strong> – Expliquer une solution technique à un public non spécialiste</li>
+            <li>Utilisation d'un langage simple pour vulgariser l'usage d'outils comme SharePoint</li>
+            <li><strong>AC6.3</strong> – Adapter sa communication à l'interlocuteur et au contexte</li>
+            <li>Ajustements après retours d'employés non techniques pour garantir clarté et accessibilité</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="competence-card c5" style="margin-bottom: 25px;">
+        <span class="code">Transversal</span>
+        <div class="competence-details">
+          <h4 style="margin-bottom: 10px;">Conduire un projet</h4>
+          <ul>
+            <li>Planification, rédaction, validation et déploiement de la documentation en autonomie</li>
+            <li>Gestion des retours utilisateurs et amélioration continue</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="popup-section demo-link">
+      <p style="text-align: center; margin-bottom: 15px; font-style: italic;">
+        Notice hébergée sur SharePoint et accessible à tous les employés
+      </p>
+    </div>
+
+    <button class="closePopup">Fermer</button>
+  </div>
+</div>
+
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Image agrandie">
+</div>
+    </section>
+
+    <!-- Inclure le fichier JavaScript -->
+    <script src="script.js"></script>
+
+    <footer class="global-footer">
+        <p>&copy; 2025 Mohamed. Tous droits réservés.</p>
     </footer>
-
-
-
-    <script>
-        // Attendre que le DOM soit entièrement chargé
-        document.addEventListener('DOMContentLoaded', function() {
-                // Sélectionner tous les liens de navigation
-                const links = document.querySelectorAll('.nav-links a');
-
-                links.forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        // Empêcher le comportement par défaut du lien
-                        e.preventDefault();
-
-                        // Obtenir l'ID de la section à atteindre
-                        const targetId = this.getAttribute('href').substring(1);
-                        const targetElement = document.getElementById(targetId);
-
-                        // Ajuster le défilement avec un petit décalage (offset)
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 90,  // Ajuste la valeur selon la hauteur de ta navbar
-                            behavior: 'smooth'
-                        });
-                    });
-                });
-            });
-                const cube = document.getElementById('cube');
-                const cubeContainer = document.getElementById('cube-container');
-                const joystickKnob = document.getElementById('joystick-knob');
-                const joystickContainer = document.getElementById('joystick-container');
-
-                let isDragging = false;
-                let startX, startY, deltaX, deltaY;
-                let currentX = -30, currentY = 30;
-
-                cubeContainer.addEventListener('mousedown', (e) => {
-                    isDragging = true;
-                    startX = e.clientX;
-                    startY = e.clientY;
-                });
-
-                cubeContainer.addEventListener('mousemove', (e) => {
-                    if (isDragging) {
-                        deltaX = e.clientX - startX;
-                        deltaY = e.clientY - startY;
-
-                        currentX += deltaY * 0.5; // Adjust rotation speed
-                        currentY += deltaX * 0.5;
-
-                        cube.style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
-
-                        startX = e.clientX;
-                        startY = e.clientY;
-                    }
-                });
-
-                cubeContainer.addEventListener('mouseup', () => {
-                    isDragging = false;
-                });
-
-                cubeContainer.addEventListener('mouseleave', () => {
-                    isDragging = false;
-                });
-
-                // Fonction pour naviguer
-                function navigateTo(section) {
-                    alert(`Naviguer vers : ${section}`);
-                    // Remplacez cette alerte par `location.href` pour rediriger vers une vraie page.
-                }
-
-                let isJoystickActive = false;
-                let joystickCenter = { x: 0, y: 0 };
-
-                // Fonction pour mettre à jour la position du cube
-                function updateCubeRotation() {
-                    cube.style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
-                }
-
-                // Fonction qui gère les événements de mouvement du joystick
-                joystickContainer.addEventListener('mousedown', (e) => {
-                    isJoystickActive = true;
-                    joystickCenter = {
-                        x: e.clientX,
-                        y: e.clientY
-                    };
-                });
-
-                joystickContainer.addEventListener('mousemove', (e) => {
-                    if (isJoystickActive) {
-                        deltaX = e.clientX - joystickCenter.x;
-                        deltaY = e.clientY - joystickCenter.y;
-
-                        // Ajuster les limites du mouvement du joystick
-                        deltaX = Math.min(Math.max(deltaX, -40), 40);
-                        deltaY = Math.min(Math.max(deltaY, -40), 40);
-
-                        joystickKnob.style.transform = `translate(-50%, -50%) translate(${deltaX}px, ${deltaY}px)`;
-
-                        // Ajuster la rotation du cube
-                        currentX += deltaY * 0.2;  // Ajuster la vitesse de rotation
-                        currentY += deltaX * 0.2;
-
-                        updateCubeRotation();
-                    }
-                });
-
-                joystickContainer.addEventListener('mouseup', () => {
-                    isJoystickActive = false;
-                    resetJoystickPosition();
-                });
-
-                joystickContainer.addEventListener('mouseleave', () => {
-                    isJoystickActive = false;
-                    resetJoystickPosition();
-                });
-
-                // Réinitialiser la position du joystick
-                function resetJoystickPosition() {
-                    joystickKnob.style.transition = 'transform 0.3s ease-out';  // Animation douce
-                    joystickKnob.style.transform = 'translate(-50%, -50%)'; // Revenir au centre
-                }
-
-                // Événement de fin d'animation pour éviter les transitions supplémentaires après un reset
-                joystickKnob.addEventListener('transitionend', () => {
-                    joystickKnob.style.transition = ''; // Supprimer l'animation après retour
-                });
-
-                // Fonction pour copier un texte dans le presse-papiers
-                function copyToClipboard(text) {
-                    // Utilise l'API clipboard pour copier le texte
-                    navigator.clipboard.writeText(text).then(function() {
-                        alert('Texte copié : ' + text); // Affiche une alerte pour confirmer
-                    }).catch(function(error) {
-                        alert('Échec de la copie : ' + error); // Affiche une alerte en cas d'erreur
-                    });
-                }
-
-                // Code pour le bouton X dans la barre de recherche
-                const searchInput = document.querySelector('.search-bar input');
-                const clearButton = document.querySelector('.search-bar button');
-
-                clearButton.addEventListener('click', () => {
-                    searchInput.value = ''; // Efface le contenu du champ de recherche
-                    searchInput.focus(); // Restaure le focus sur le champ de recherche
-                });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const searchInput = document.getElementById("search-input");
-            const tagsContainer = document.getElementById("tags-container");
-            const projectCards = document.querySelectorAll(".project-card");
-            const clearFiltersButton = document.getElementById("clear-filters");
-
-            let activeTags = []; // Liste des tags actifs
-
-            // Gestion de l'appui sur Entrée
-            searchInput.addEventListener("keydown", function (e) {
-                if (e.key === "Enter" && searchInput.value.trim() !== "") {
-                    e.preventDefault(); // Empêche le rechargement de la page
-                    const tagText = searchInput.value.trim().toLowerCase();
-
-                    if (!activeTags.includes(tagText)) {
-                        // Ajoute un tag seulement s'il n'existe pas déjà
-                        activeTags.push(tagText);
-
-                        // Crée un nouveau tag
-                        const tag = document.createElement("div");
-                        tag.className = "tag";
-                        tag.innerHTML = `
-                            ${tagText}
-                            <span class="remove-tag">&times;</span>
-                        `;
-
-                        // Ajoute un gestionnaire pour supprimer le tag
-                        tag.querySelector(".remove-tag").addEventListener("click", function () {
-                            tagsContainer.removeChild(tag);
-                            activeTags = activeTags.filter((t) => t !== tagText);
-                            filterProjects();
-                            toggleClearFiltersButton();
-                        });
-
-                        // Ajoute le tag au conteneur
-                        tagsContainer.appendChild(tag);
-
-                        // Vide le champ de recherche
-                        searchInput.value = "";
-
-                        // Met à jour le filtrage des projets
-                        filterProjects();
-                        toggleClearFiltersButton();
-                    }
-                }
-            });
-
-            
-
-            // Fonction de filtrage des projets
-            function filterProjects() {
-                projectCards.forEach((card) => {
-                    const keywords = card.getAttribute("data-keywords").toLowerCase();
-                    const matches = activeTags.every((tag) => {
-                        // Vérifier si le mot-clé dans activeTags est un mot complet et distinct
-                        const regex = new RegExp(`\\b${tag}\\b`, "i"); // \b représente une limite de mot
-                        return regex.test(keywords); // Si le mot est un match exact dans le mot-clé
-                    });
-
-                    if (matches) {
-                        card.style.display = "flex"; // Affiche le projet correspondant
-                    } else {
-                        card.style.display = "none"; // Masque les autres
-                    }
-                });
-            }
-
-            // Affiche ou masque le bouton "Supprimer tous les filtres"
-            function toggleClearFiltersButton() {
-                if (activeTags.length > 0) {
-                    clearFiltersButton.style.display = "block";
-                } else {
-                    clearFiltersButton.style.display = "none";
-                }
-            }
-
-            // Gestion du clic sur "Supprimer tous les filtres"
-            clearFiltersButton.addEventListener("click", function () {
-                activeTags = []; // Réinitialise les tags actifs
-                tagsContainer.innerHTML = ""; // Supprime tous les tags visuels
-                filterProjects(); // Affiche tous les projets
-                toggleClearFiltersButton(); // Cache le bouton
-            });
-        });
-    </script>
 </body>
 </html>

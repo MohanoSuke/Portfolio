@@ -1,0 +1,381 @@
+body {
+  padding-top: 30px;
+  margin: 0;
+}
+
+.profile-header {
+  margin-bottom: 30px;
+}
+
+/* Titre principal */
+.cv-title {
+  text-align: center;
+  font-size: 48px;
+  color: #2db1ff;
+  margin: 50px 0 30px 0;
+  font-weight: bold;
+  text-shadow: 1px 1px 10px rgba(45, 177, 255, 0.4);
+}
+
+/* Titres secondaires (h2) */
+h2 {
+  font-size: 32px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #00e0ff, #00ff95);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 5px rgba(255, 0, 150, 0.3);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+/* Section CV */
+.cv-section-modern {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 80px;
+  justify-content: center;
+  padding: 50px 5%;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(45, 177, 255, 0.1);
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+/* Bloc de gauche : infos personnelles */
+.left-info {
+  flex: 1 1 480px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  padding: 0 20px;
+  align-items: center;
+}
+
+.left-info h2 {
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+.left-info .info-line {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  gap: 12px;
+}
+
+.left-info .info-line i {
+  color: #2db1ff;
+  font-size: 20px;
+}
+
+/* Bouton téléchargement CV */
+.cv-button {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 15px;
+  box-shadow: 0 5px 15px rgba(0, 114, 255, 0.3);
+  text-decoration: none;
+  text-align: center;
+  width: fit-content;
+  transition: all 0.3s ease-in-out;
+}
+
+.cv-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  box-shadow: 0 8px 20px rgba(0, 114, 255, 0.5);
+}
+
+/* Bloc de droite : profil */
+.right-info {
+  flex: 1 1 480px;
+  color: #fff;
+  padding: 0 20px;
+}
+
+.right-info h2 {
+  text-align: center;
+}
+
+.right-info p {
+  margin-bottom: 16px;
+  text-align: justify;
+  line-height: 1.6;
+}
+
+.show-more-btn {
+  display: inline-block;
+  margin-top: 10px;
+  color: #2db1ff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.show-more-btn:hover {
+  color: #00ff95;
+}
+/* Cacher au départ */
+.hidden {
+  display: none;
+}
+
+/* Bouton secondaire pour "En savoir plus" */
+.btn-secondary {
+  display: inline-block;
+  margin-top: 15px;
+  background: transparent;
+  border: 2px solid #2db1ff;
+  color: #2db1ff;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #2db1ff;
+  color: #01050b;
+}
+
+
+/* Hobbies */
+.hobbies-bar {
+  padding: 40px 5% 60px;
+  color: #2db1ff;
+  margin-top: 50px;
+}
+
+.hobbies-bar h2 {
+ font-size: 32px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #00e0ff, #00ff95);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 5px rgba(255, 0, 150, 0.3);
+  margin-bottom: 40px;
+}
+
+.hobby-icons {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+}
+
+.hobby-item {
+  position: relative;
+  cursor: pointer;
+  font-size: 36px;
+  color: #2db1ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: rgba(45, 177, 255, 0.95);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 220px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 15px rgba(3, 19, 40, 0.6);
+  z-index: 10;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: rgba(45, 177, 255, 0.95) transparent transparent transparent;
+}
+
+.hobby-item:hover .tooltip,
+.hobby-item:focus .tooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.technologies-section {
+  padding: 50px 5%;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.technologies-section h2 {
+  font-size: 32px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #00e0ff, #00ff95);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 5px rgba(255, 0, 150, 0.3);
+  margin-bottom: 40px;
+}
+
+.tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+}
+
+.tech-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 120px;
+}
+
+.tech-item img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(45, 177, 255, 0.3));
+    max-width: 120px;
+
+}
+
+.tech-item span {
+  color: #a3d2ff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+.tech-grid img {
+  height: 80px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.tech-grid img:hover {
+  transform: scale(1.1);
+}
+
+.contact-form-section {
+  margin-top: 80px;
+  padding: 50px 5% 60px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(45, 177, 255, 0.15);
+}
+
+.contact-form-section h2 {
+  font-size: 32px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #00e0ff, #00ff95);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 5px rgba(255, 0, 150, 0.3);
+  margin-bottom: 30px;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.contact-form textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  padding: 14px;
+  background-color: #0f1e2a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  resize: vertical; /* uniquement vertical */
+  box-shadow: 0 0 5px rgba(45, 177, 255, 0.2);
+    min-height: 120px;
+
+}
+.form-group {
+  margin-bottom: 20px;
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: #0f1e2a;
+  color: white;
+  font-size: 16px;
+  box-shadow: 0 0 5px rgba(45, 177, 255, 0.2);
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #aaa;
+}
+
+.btn-contact {
+background: linear-gradient(135deg, #00c6ff, #0072ff);
+color: white;
+border: none;
+padding: 12px 30px;
+border-radius: 8px;
+font-weight: bold;
+font-size: 15px;
+box-shadow: 0 5px 15px rgba(0, 114, 255, 0.3);
+text-decoration: none;
+text-align: center;
+width: fit-content;
+transition: all 0.3s ease-in-out;
+}
+
+.btn-contact:hover {
+  background-color: #00ff95;
+  transform: scale(1.05);
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 5%;
+  }
+
+  .cv-section-modern {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .hobby-icons {
+    gap: 30px;
+  }
+
+  .hobby-item {
+    font-size: 28px;
+  }
+
+  .cv-title {
+    font-size: 36px;
+  }
+}
